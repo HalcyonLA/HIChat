@@ -96,53 +96,60 @@ open class HIChatViewController: UIViewController {
     }
     
     open func refreshMessages(_ animated: Bool = false, scrolling: Bool = true) {
-        invalidateConversation()
-        tableView.reloadData()
-        if scrolling {
-            tableView.scrollToEnd(animated)
+        synced(self) {
+            invalidateConversation()
+            
+            tableView.reloadData()
+            if scrolling {
+                tableView.scrollToEnd(animated)
+            }
         }
     }
     
     fileprivate func insertMessage(_ message: HIMessage) {
-        var insertSection = true
-        if conversation.count > 0 {
-            if conversation.last!.last!.date.isTheSameDay(message.date) {
-                insertSection = false
+        synced(self) { 
+            var insertSection = true
+            if conversation.count > 0 {
+                if conversation.last!.last!.date.isTheSameDay(message.date) {
+                    insertSection = false
+                }
             }
+            tableView.beginUpdates()
+            
+            if insertSection {
+                conversation.append([message])
+                tableView.insertSections(IndexSet(integer: conversation.count - 1), with: .top)
+            } else {
+                var group = conversation.last!
+                group.append(message)
+                conversation[conversation.count - 1] = group
+                let indexPath = IndexPath(row: group.count - 1, section: conversation.count - 1)
+                tableView.insertRows(at: [indexPath], with: .top)
+            }
+            
+            tableView.endUpdates()
         }
-        tableView.beginUpdates()
-        
-        if insertSection {
-            conversation.append([message])
-            tableView.insertSections(IndexSet(integer: conversation.count - 1), with: .top)
-        } else {
-            var group = conversation.last!
-            group.append(message)
-            conversation[conversation.count - 1] = group
-            let indexPath = IndexPath(row: group.count - 1, section: conversation.count - 1)
-            tableView.insertRows(at: [indexPath], with: .top)
-        }
-        
-        tableView.endUpdates()
     }
     
     open func removeMessage(_ message: HIMessage) {
-        for (i, var group) in conversation.enumerated() {
-            if let index = group.index(where: { (msg) -> Bool in
-                return msg === message
-            }) {
-                tableView.beginUpdates()
-                if group.count == 1 {
-                    conversation.remove(at: i)
-                    tableView.deleteSections(IndexSet(integer: i), with: .top)
-                } else {
-                    let indexPath = IndexPath(row: index, section: i)
-                    group.remove(at: index)
-                    conversation[i] = group
-                    tableView.deleteRows(at: [indexPath], with: .top)
+        synced(self) { 
+            for (i, var group) in conversation.enumerated() {
+                if let index = group.index(where: { (msg) -> Bool in
+                    return msg === message
+                }) {
+                    tableView.beginUpdates()
+                    if group.count == 1 {
+                        conversation.remove(at: i)
+                        tableView.deleteSections(IndexSet(integer: i), with: .top)
+                    } else {
+                        let indexPath = IndexPath(row: index, section: i)
+                        group.remove(at: index)
+                        conversation[i] = group
+                        tableView.deleteRows(at: [indexPath], with: .top)
+                    }
+                    tableView.endUpdates()
+                    return
                 }
-                tableView.endUpdates()
-                return
             }
         }
     }
