@@ -163,6 +163,15 @@ open class HIMessageInputView: UIView {
         self.frame = frame
     }
     
+    open func invalidateSendButton() {
+        let hasText = textView.text.cleanWhitespaces().length > 0
+        if let shouldSend = delegate?.inputViewShouldSendMessage?(self) {
+            sendButton.isEnabled = shouldSend && hasText
+        } else {
+            sendButton.isEnabled = hasText
+        }
+    }
+    
     @objc fileprivate func mediaTapped() {
         delegate?.inputViewDidSelectMediaButton(self)
     }
@@ -183,11 +192,7 @@ open class HIMessageInputView: UIView {
     }
     
     fileprivate func textViewDidChanged() {
-        if let shouldSend = delegate?.inputViewShouldSendMessage?(self) {
-            sendButton.isEnabled = shouldSend
-        } else {
-            sendButton.isEnabled = textView.text.cleanWhitespaces().length > 0
-        }
+        invalidateSendButton()
         adjustTextViewSize()
     }
 }
