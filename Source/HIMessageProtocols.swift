@@ -26,6 +26,8 @@ import UIKit
     
     func didSelectAvatarInMessageCell(_ cell: HIMessageBaseCell)
     
+    @objc optional func canDeleteMessageInCell(_ cell: HIMessageBaseCell) -> Bool
+    
     func didDeleteMessageInCell(_ cell: HIMessageBaseCell)
     
     func didRetryRequestedMessageInCell(_ cell: HIMessageBaseCell)

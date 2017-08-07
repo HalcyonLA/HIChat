@@ -207,7 +207,15 @@ open class HIMessageBaseCell: UITableViewCell {
         }
         
         if action == #selector(delete(_:)) {
-            return message.fromMe
+            if message.fromMe {
+                if let canDelete = delegate?.canDeleteMessageInCell?(self) {
+                    return canDelete
+                } else {
+                    return true
+                }
+            } else {
+                return false
+            }
         }
         
         let selector = NSStringFromSelector(action)
