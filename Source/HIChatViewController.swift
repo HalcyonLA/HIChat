@@ -229,11 +229,8 @@ extension HIChatViewController: UITableViewDataSource {
         cell.message = message
         
         let delegate = self as HIMessageDataSource
-        if delegate.responds(to: #selector(HIMessageDataSource.configureCell(_:forMessageAtIndex:))) {
-            let index = self.messagesArray().index(where: { (msg) -> Bool in
-                return msg === message
-            })
-            delegate.configureCell!(cell, forMessageAtIndex: index!)
+        if delegate.responds(to: #selector(HIMessageDataSource.configureCell(_:forMessage:))) {
+            delegate.configureCell!(cell, forMessage: message)
         }
         
         return cell

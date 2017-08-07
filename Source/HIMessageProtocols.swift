@@ -43,7 +43,7 @@ import UIKit
     
     func shouldUseDayInterval() -> Bool
     
-    @objc optional func configureCell(_ cell: HIMessageBaseCell, forMessageAtIndex index: Int)
+    @objc optional func configureCell(_ cell: HIMessageBaseCell, forMessage message: HIMessage)
     
     @objc optional func messageMinWidth(_ fromMe: Bool) -> CGFloat
     
