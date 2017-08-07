@@ -15,7 +15,7 @@ open class HIMessageBaseCell: UITableViewCell {
     open static var avatarMargin = CGFloat(8)
     open static var maxWidth = UIDevice.deviceWidth() - 100
     open static var ballonImageSent = UIImage(named: "hic-bubble-sent", in: HIChatViewController.bundle(), compatibleWith: nil)!.tintColor(UIColor.lightGray)
-    open static var ballonImageRecived = UIImage(named: "hic-bubble-received", in: HIChatViewController.bundle(), compatibleWith: nil)!.tintColor(UIColor.blue)
+    open static var ballonImageReceived = UIImage(named: "hic-bubble-received", in: HIChatViewController.bundle(), compatibleWith: nil)!.tintColor(UIColor.blue)
     
     open weak var dataSourse: HIMessageDataSource!
     open weak var delegate: HIMessageDelegate!
@@ -91,7 +91,7 @@ open class HIMessageBaseCell: UITableViewCell {
             
             let fromMe = message.fromMe
             
-            balloonView.image = fromMe ? HIMessageBaseCell.ballonImageSent : HIMessageBaseCell.ballonImageRecived
+            balloonView.image = fromMe ? HIMessageBaseCell.ballonImageSent : HIMessageBaseCell.ballonImageReceived
             
             var messageMargin = CGFloat(0)
             let showAvatar = (message.avatarURL != nil || message.avatar != nil) &&

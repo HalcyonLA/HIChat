@@ -11,26 +11,30 @@ import UIKit
 
 open class HIMessageTextCell: HIMessageBaseCell {
     
-    let textView: HIMessageTextView
+    let _textView: HIMessageTextView
+    
+    open var textView: UITextView {
+        return _textView as! UITextView
+    }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         
-        textView = HIMessageTextView()
-        textView.textContainer.lineFragmentPadding = 0
-        textView.isEditable = false
-        textView.backgroundColor = UIColor.clear
-        textView.textColor = UIColor.white
-        textView.isScrollEnabled = false
-        textView.dataDetectorTypes = .all
+        _textView = HIMessageTextView()
+        _textView.textContainer.lineFragmentPadding = 0
+        _textView.isEditable = false
+        _textView.backgroundColor = UIColor.clear
+        _textView.textColor = UIColor.white
+        _textView.isScrollEnabled = false
+        _textView.dataDetectorTypes = .all
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        textView.frame = messageView.bounds
-        textView.applyFullAutoresizingMask()
+        _textView.frame = messageView.bounds
+        _textView.applyFullAutoresizingMask()
         
-        messageView.addSubview(textView)
+        messageView.addSubview(_textView)
         
-        appendGesture(view: textView)
+        appendGesture(view: _textView)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -39,23 +43,23 @@ open class HIMessageTextCell: HIMessageBaseCell {
     
     open override var textFont: UIFont! {
         didSet {
-            textView.font = textFont
+            _textView.font = textFont
         }
     }
     
     open override func messageDidChanged() {
         let fromMe = message.fromMe
         
-        textView.textContainerInset = UIEdgeInsetsMake(8, fromMe ? 10 : 15, 8, fromMe ? 15 : 10)
+        _textView.textContainerInset = UIEdgeInsetsMake(8, fromMe ? 10 : 15, 8, fromMe ? 15 : 10)
         
-        textView.text = message.messageText
+        _textView.text = message.messageText
     }
     
     open override func contentSize() -> CGSize {
-        return textView.sizeThatFits(CGSize(width: HIMessageBaseCell.maxWidth, height: CGFloat.greatestFiniteMagnitude))
+        return _textView.sizeThatFits(CGSize(width: HIMessageBaseCell.maxWidth, height: CGFloat.greatestFiniteMagnitude))
     }
     
     override func viewForActions() -> UIView {
-        return textView
+        return _textView
     }
 }
