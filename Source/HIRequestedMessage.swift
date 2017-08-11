@@ -10,10 +10,11 @@ import UIKit
 import HalcyonInnovationKit
 import SDWebImage
 
-public protocol HIRequestedMessageDelegate: NSObjectProtocol {
+@objc public protocol HIRequestedMessageDelegate: NSObjectProtocol {
     func messageRequestDidStarted(_ message: HIRequestedMessage)
     func messageRequest(_ message: HIRequestedMessage, didFinishWithError error: NSError?)
-    func messageRequest(for message: HIRequestedMessage, completion: @escaping ((_ message: Any?, _ error: NSError?) -> Void)) -> DataManagerRequest
+    @objc optional func messageRequest(for message: HIRequestedMessage, completion: @escaping ((_ message: Any?, _ error: NSError?) -> Void)) -> DataManagerRequest
+    @objc optional func startCustomRequest(for message: HIRequestedMessage, completion: @escaping ((_ message: Any?, _ error: NSError?) -> Void)) -> Bool
 }
 
 open class HIRequestedMessage: NSObject {
@@ -44,16 +45,19 @@ open class HIRequestedMessage: NSObject {
     }
     
     open func sendRequest() {
+        guard let delegate = self.delegate else {
+            assert(false, "Can't send without delegate")
+            return
+        }
         
         let shouldStart = msgStatus == .none
         msgStatus = .requested
         
         if shouldStart {
-            delegate?.messageRequestDidStarted(self)
+            delegate.messageRequestDidStarted(self)
             HIRequestedMessageStorage.shared.addMessage(self)
         }
-        
-        guard let request = delegate?.messageRequest(for: self, completion: { (msg, error) in
+        let completion: ((_ message: Any?, _ error: NSError?) -> Void) = { (msg, error) in
             if error != nil {
                 self.msgStatus = .error
             } else {
@@ -62,7 +66,16 @@ open class HIRequestedMessage: NSObject {
                 HIRequestedMessageStorage.shared.removeMessage(self)
             }
             self.delegate?.messageRequest(self, didFinishWithError: error)
-        }) else { return }
+        }
+        
+        var customRequest: Bool = false
+        if let custom = delegate.startCustomRequest?(for: self, completion: completion) {
+            customRequest = custom
+        }
+        
+        guard !customRequest, let request = delegate.messageRequest?(for: self, completion: completion) else {
+            return
+        }
         
         self.request = request
     }
