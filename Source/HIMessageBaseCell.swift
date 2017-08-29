@@ -180,6 +180,9 @@ open class HIMessageBaseCell: UITableViewCell {
         
         let menu = UIMenuController.shared
         menu.setTargetRect(messageView.frame, in: containerView)
+        if let items = delegate.customMenuItems?(for: self) {
+            menu.menuItems = items
+        }
         menu.setMenuVisible(true, animated: true)
     }
     
@@ -224,6 +227,20 @@ open class HIMessageBaseCell: UITableViewCell {
         }
         
         if action != #selector(cut(_:)) || action != #selector(paste(_:)) {
+            if let menu = sender as? UIMenuController {
+                if let customItems = delegate.customMenuItems?(for: self) {
+                    let titles = customItems.map({ (item) -> String in
+                        return item.title
+                    })
+                    if let items = menu.menuItems {
+                        for item in items {
+                            if item.action == action && titles.contains(item.title) {
+                                return true
+                            }
+                        }
+                    }
+                }
+            }
             return false
         }
         

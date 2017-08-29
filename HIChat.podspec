@@ -6,7 +6,7 @@ s.name = "HIChat"
 s.module_name = "HIChat"
 s.summary = "Halcyon Innovation chat."
 s.requires_arc = true
-s.version = "1.0.6"
+s.version = "1.0.7"
 s.author = { "Vlad Getman" => "ibrightsider@gmail.com" }
 
 s.license = { :type => "MIT", :file => "LICENSE" }

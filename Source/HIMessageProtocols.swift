@@ -33,6 +33,8 @@ import UIKit
     func didRetryRequestedMessageInCell(_ cell: HIMessageBaseCell)
     
     func shouldBeCellFirstResponder(_ cell: HIMessageBaseCell) -> Bool
+    
+    @objc optional func customMenuItems(for cell: HIMessageBaseCell) -> [UIMenuItem]?
 }
 
 @objc public protocol HIMessageDataSource: NSObjectProtocol {
