@@ -31,13 +31,15 @@ open class HIChatViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        tableView.frame = self.view.bounds
+        tableView.frame = view.bounds
         tableView.autoresizingMask = [.flexibleBottomMargin, .flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin, .flexibleWidth, .flexibleHeight]
-        self.view.insertSubview(tableView, at: 0)
+        view.insertSubview(tableView, at: 0)
         
         tableView.separatorStyle = .none
         tableView.backgroundColor = UIColor.clear
         tableView.keyboardDismissMode = .interactive
+        tableView.estimatedSectionFooterHeight = 0
+        tableView.estimatedSectionHeaderHeight = 0
         tableView.dataSource = self
         tableView.delegate = self
         
@@ -60,7 +62,7 @@ open class HIChatViewController: UIViewController {
         messageInputView = HIMessageInputView(controller: self)
         messageInputView.tableView = tableView
         messageInputView.delegate = self
-        self.view.insertSubview(messageInputView, aboveSubview: tableView)
+        view.insertSubview(messageInputView, aboveSubview: tableView)
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -71,6 +73,18 @@ open class HIChatViewController: UIViewController {
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         messageInputView.enableKeyboardObservers = false
+    }
+    
+    open override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if #available(iOS 11.0, *) {
+            let safeAreaInsets = UIApplication.shared.keyWindow!.safeAreaInsets
+            if safeAreaInsets.bottom > 0 {
+                var rect = tableView.frame
+                rect.size.height = view.bounds.height - safeAreaInsets.bottom
+                tableView.frame = rect
+            }
+        }
     }
     
     @objc open func didRequestOlderMessages() {

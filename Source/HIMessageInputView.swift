@@ -49,6 +49,13 @@ open class HIMessageInputView: UIView {
                         superview.addKeyboardPanning(actionHandler: { (rect, opening, closing) in
                             var frame = self.frame
                             frame.origin.y = rect.origin.y - frame.height
+                            if #available(iOS 11.0, *) {
+                                let inset = self.safeAreaInsets.bottom
+                                let maxY = superview.frame.height - inset
+                                if frame.maxY >= maxY {
+                                    frame.origin.y -= frame.maxY - maxY
+                                }
+                            }
                             self.frame = frame
                             if opening {
                                 self.tableView?.scrollToEnd()
@@ -58,6 +65,22 @@ open class HIMessageInputView: UIView {
                         superview.removeKeyboardControl()
                     }
                 }
+            }
+        }
+    }
+    
+    @available(iOS 11.0, *)
+    open override var safeAreaInsets: UIEdgeInsets {
+        guard let window = UIApplication.shared.keyWindow else {
+            return .zero
+        }
+        return window.safeAreaInsets
+    }
+    
+    open override var backgroundColor: UIColor? {
+        didSet {
+            if let view = viewWithTag(13412) {
+                view.backgroundColor = backgroundColor
             }
         }
     }
@@ -81,6 +104,9 @@ open class HIMessageInputView: UIView {
         var frame = controller.view.frame
         frame.size.height = height
         frame.origin.y = controller.view.height - frame.height
+        if #available(iOS 11.0, *) {
+            frame.origin.y -= UIApplication.shared.keyWindow!.safeAreaInsets.bottom
+        }
         
         mediaButton = UIButton(frame: CGRect(x: 0, y: 0, width: margins.left, height: height))
         mediaButton.setImage(UIImage(named: "hic-camera-button", in: HIChatViewController.bundle(), compatibleWith: nil), for: .normal)
@@ -122,20 +148,36 @@ open class HIMessageInputView: UIView {
         sendButton.addTarget(self, action: #selector(sendTapped), for: .touchUpInside)
         textView.delegate = self
         
-        self.autoresizingMask = [.flexibleTopMargin, .flexibleWidth]
+        autoresizingMask = [.flexibleTopMargin, .flexibleWidth]
         
-        self.backgroundColor = UIColor(hex: 0xf9f9f9)
+        backgroundColor = UIColor(hex: 0xf9f9f9)
         
-        self.addSubview(dividerView)
-        self.addSubview(mediaButton)
-        self.addSubview(sendButton)
-        self.addSubview(textView)
+        addSubview(dividerView)
+        addSubview(mediaButton)
+        addSubview(sendButton)
+        addSubview(textView)
+        
+        if #available(iOS 11.0, *) {
+            let bottomOffset = safeAreaInsets.bottom
+            if bottomOffset > 0 {
+                clipsToBounds = false
+                let view = UIView(frame: CGRect(x: 0, y: height, width: width, height: bottomOffset))
+                view.tag = 13412
+                view.backgroundColor = backgroundColor
+                view.autoresizingMask = [.flexibleTopMargin, .flexibleWidth]
+                addSubview(view)
+            }
+        }
     }
     
     open func invalidateInsets() {
-        let offset = self.superview!.height - (self.frame).minY
+        let offset = superview!.height - frame.minY
         
-        let insets = UIEdgeInsets(top: tableView!.contentInset.top, left: 0, bottom: offset, right: 0)
+        var insets = tableView!.contentInset
+        insets.bottom = offset
+        if #available(iOS 11.0, *) {
+            insets.bottom -= safeAreaInsets.bottom
+        }
         tableView!.contentInset = insets
         tableView!.scrollIndicatorInsets = insets
     }

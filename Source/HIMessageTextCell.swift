@@ -14,7 +14,7 @@ open class HIMessageTextCell: HIMessageBaseCell {
     let _textView: HIMessageTextView
     
     open var textView: UITextView {
-        return _textView as! UITextView
+        return _textView
     }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
