@@ -48,6 +48,7 @@ open class HIMessagePhotoCell: HIMessageBaseCell {
     }
     
     open override func messageDidChanged() {
+        let fromMe = message.fromMe
         nameInsets.left = fromMe ? 10 : 15
         nameInsets.right = fromMe ? 15 : 10
         
