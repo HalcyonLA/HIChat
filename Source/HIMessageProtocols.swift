@@ -43,8 +43,6 @@ import UIKit
     
     func heightForMessage(_ message: HIMessage) -> CGFloat
     
-    func shouldUseDayInterval() -> Bool
-    
     @objc optional func configureCell(_ cell: HIMessageBaseCell, forMessage message: HIMessage)
     
     @objc optional func messageMinWidth(_ fromMe: Bool) -> CGFloat

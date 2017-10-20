@@ -6,7 +6,7 @@ s.name = "HIChat"
 s.module_name = "HIChat"
 s.summary = "Halcyon Innovation chat."
 s.requires_arc = true
-s.version = "1.0.8"
+s.version = "1.1.0"
 s.author = { "Vlad Getman" => "ibrightsider@gmail.com" }
 
 s.license = { :type => "MIT", :file => "LICENSE" }
@@ -15,7 +15,7 @@ s.source = { :git => "https://github.com/HalcyonLA/HIChat.git", :tag => "#{s.ver
 
 s.framework = "UIKit"
 
-s.dependency 'HalcyonInnovationKit/Network', '~> 1.2.7'
+s.dependency 'HalcyonInnovationKit/Network', '~> 1.3.2'
 s.dependency 'SZTextView', '~> 1.3'
 s.dependency 'DAKeyboardControl', '~> 2.4.0'
 

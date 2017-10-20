@@ -9,11 +9,23 @@
 import UIKit
 import HalcyonInnovationKit
 
+public enum HIChatHeaderType: Int {
+    case none
+    case dayInterval
+    case eachMessage
+    
+    fileprivate func useHeader() -> Bool {
+        return self != .none
+    }
+}
+
 open class HIChatViewController: UIViewController {
     
     open fileprivate(set) var tableView: UITableView = UITableView(frame: CGRect.zero, style: .grouped)
     open fileprivate(set) var refreshControl: UIRefreshControl = UIRefreshControl()
     open fileprivate(set) var messageInputView: HIMessageInputView!
+    
+    open var headerType: HIChatHeaderType = .dayInterval
     
     fileprivate var conversation: [[HIMessage]] = []
     fileprivate var dateFormatter = DateFormatter()
@@ -28,6 +40,8 @@ open class HIChatViewController: UIViewController {
     
     override open func viewDidLoad() {
         super.viewDidLoad()
+        
+        dateFormatter.dateFormat = "dd MMM, eee, HH:mm"
         
         view.backgroundColor = .white
         
@@ -85,6 +99,7 @@ open class HIChatViewController: UIViewController {
                 tableView.frame = rect
             }
         }
+        tableView.tv_scrollToEnd(animated: false)
     }
     
     @objc open func didRequestOlderMessages() {
@@ -98,14 +113,14 @@ open class HIChatViewController: UIViewController {
     open func sendMessage(_ message: HIMessage, scrollToBottom: Bool = true) {
         insertMessage(message)
         if scrollToBottom {
-            tableView.scrollToEnd(true)
+            tableView.tv_scrollToEnd(animated: true)
         }
     }
     
     open func receiveMessage(_ message: HIMessage, scrollToBottom: Bool = true) {
         insertMessage(message)
         if scrollToBottom {
-            tableView.scrollToEnd(true)
+            tableView.tv_scrollToEnd(animated: true)
         }
     }
     
@@ -115,7 +130,7 @@ open class HIChatViewController: UIViewController {
             
             tableView.reloadData()
             if scrolling {
-                tableView.scrollToEnd(animated)
+                tableView.scrollToEnd(animated: animated)
             }
         }
     }
@@ -173,7 +188,11 @@ open class HIChatViewController: UIViewController {
         let messages = self.messagesArray()
         
         if messages.count > 0 {
-            if self.shouldUseDayInterval() {
+            switch headerType {
+            case .none:
+                conversation.append(messages)
+                
+            case .dayInterval:
                 var groupIndex = 0
                 for (i, message) in messages.enumerated() {
                     if i == 0 {
@@ -190,8 +209,11 @@ open class HIChatViewController: UIViewController {
                         }
                     }
                 }
-            } else {
-                conversation.append(messages)
+                
+            case .eachMessage:
+                for message in messages {
+                    conversation.append([message])
+                }
             }
         }
         self.conversation = conversation
@@ -213,7 +235,7 @@ extension HIChatViewController: UITableViewDataSource {
     }
     
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if self.shouldUseDayInterval() {
+        if headerType.useHeader() {
             return 40
         }
         return 0.01
@@ -253,12 +275,10 @@ extension HIChatViewController: UITableViewDataSource {
 
 extension HIChatViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if shouldUseDayInterval() {
+        if headerType.useHeader() {
             let headerView = tableView.dequeueReusableHeaderFooterViewWithClass(HIMessageHeaderView.self)
             
             let date = conversation[section].first!.date
-            
-            dateFormatter.dateFormat = "dd MMM, eee, HH:mm"
             
             headerView?.label.text = dateFormatter.string(from: date)
             
@@ -325,10 +345,6 @@ extension HIChatViewController: HIMessageDataSource {
         default:
             return 44
         }
-    }
-    
-    open func shouldUseDayInterval() -> Bool {
-        return true
     }
     
     open func mediaMessageWidth() -> CGFloat {
