@@ -206,7 +206,7 @@ open class HIMessageInputView: UIView {
     }
     
     open func invalidateSendButton() {
-        let hasText = textView.text.cleanWhitespaces().length > 0
+        let hasText = textView.text.cleanWhitespaces().count > 0
         if let shouldSend = delegate?.inputViewShouldSendMessage?(self) {
             sendButton.isEnabled = shouldSend && hasText
         } else {

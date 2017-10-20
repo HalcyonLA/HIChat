@@ -127,8 +127,6 @@ open class HIMessageBaseCell: UITableViewCell {
             (dataSourse.avatarsMode() == .both ||
                 (dataSourse.avatarsMode() == .other && !fromMe))
         
-        var topInset: CGFloat = nameLabel != nil && !nameLabel!.isHidden ? nameLabel!.font.lineHeight : 0
-        
         if let label = self.nameLabel, !label.isHidden {
             label.frame = CGRect(x: margins.left + nameInsets.left,
                                  y: 0,
