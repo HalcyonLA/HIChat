@@ -47,4 +47,6 @@ import UIKit
     var readed: Bool { get }
     
     var identifier: String { get }
+    
+    var userName: String? { get }
 }

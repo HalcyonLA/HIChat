@@ -50,7 +50,13 @@ open class HIMessageTextCell: HIMessageBaseCell {
     open override func messageDidChanged() {
         let fromMe = message.fromMe
         
-        _textView.textContainerInset = UIEdgeInsetsMake(8, fromMe ? 10 : 15, 8, fromMe ? 15 : 10)
+        let leftSpacing: CGFloat = fromMe ? 10 : 15
+        let rightSpacing: CGFloat = fromMe ? 15 : 10
+        
+        _textView.textContainerInset = UIEdgeInsetsMake(8, leftSpacing, 8, rightSpacing)
+        
+        nameInsets.left = leftSpacing
+        nameInsets.right = rightSpacing
         
         _textView.text = message.messageText
     }

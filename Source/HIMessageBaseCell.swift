@@ -12,6 +12,7 @@ import SDWebImage
 open class HIMessageBaseCell: UITableViewCell {
     
     open static var margins = UIEdgeInsetsMake(8, 8, 8, 8)
+    open var nameInsets = UIEdgeInsetsMake(0, 0, 0, 0)
     open static var avatarMargin = CGFloat(8)
     open static var maxWidth = UIDevice.deviceWidth() - 100
     open static var ballonImageSent = UIImage(named: "hic-bubble-sent", in: HIChatViewController.bundle(), compatibleWith: nil)!.tintColor(UIColor.lightGray)
@@ -20,12 +21,19 @@ open class HIMessageBaseCell: UITableViewCell {
     open weak var dataSourse: HIMessageDataSource!
     open weak var delegate: HIMessageDelegate!
     open weak var textFont: UIFont!
+    open weak var userNameFont: UIFont! {
+        didSet {
+            nameLabel?.font = userNameFont
+        }
+    }
     
     fileprivate let containerView: UIView = UIView()
+    
+    open private(set) var nameLabel: UILabel?
     open let balloonView: UIImageView = UIImageView()
-    open fileprivate(set) var avatarView: UIImageView?
-    fileprivate var errorButton: UIButton?
-    open fileprivate(set) var messageView: UIView
+    open private(set) var avatarView: UIImageView?
+    private var errorButton: UIButton?
+    open private(set) var messageView: UIView
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         
@@ -45,11 +53,11 @@ open class HIMessageBaseCell: UITableViewCell {
         balloonView.applyFullAutoresizingMask()
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.selectionStyle = .none
+        selectionStyle = .none
         
         appendGesture(view: messageView)
         
-        self.addSubview(containerView)
+        addSubview(containerView)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -69,6 +77,23 @@ open class HIMessageBaseCell: UITableViewCell {
     
     open var message: HIMessage! {
         didSet {
+            if let userName = message.userName {
+                if nameLabel == nil {
+                    let label = UILabel()
+                    label.font = userNameFont
+                    label.backgroundColor = .clear
+                    label.textColor = .black
+                    containerView.addSubview(label)
+                    
+                    nameLabel = label
+                }
+                nameLabel?.textAlignment = message.fromMe ? .right : .left
+                nameLabel?.text = userName
+                nameLabel?.isHidden = false
+            } else {
+                nameLabel?.text = nil
+                nameLabel?.isHidden = true
+            }
             messageDidChanged()
             setNeedsLayout()
         }
@@ -84,78 +109,90 @@ open class HIMessageBaseCell: UITableViewCell {
     
     open override func layoutSubviews() {
         super.layoutSubviews()
-        containerView.frame = self.bounds
+        containerView.frame = bounds
         
-        if message != nil {
-            let margins = HIMessageBaseCell.margins
-            
-            let fromMe = message.fromMe
-            
-            balloonView.image = fromMe ? HIMessageBaseCell.ballonImageSent : HIMessageBaseCell.ballonImageReceived
-            
-            var messageMargin = CGFloat(0)
-            let showAvatar = (message.avatarURL != nil || message.avatar != nil) &&
-                (dataSourse.avatarsMode() == .both ||
-                    (dataSourse.avatarsMode() == .other && !fromMe))
-            
-            if showAvatar {
-                let size = dataSourse.userImageSize!()
-                messageMargin += size.width + HIMessageBaseCell.avatarMargin
-                if avatarView == nil {
-                    avatarView = UIImageView(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-                    avatarView!.contentMode = .scaleAspectFill
-                    avatarView!.clipsToBounds = true
-                    avatarView!.layer.cornerRadius = size.height / 2
-                    avatarView!.isUserInteractionEnabled = true
-                    avatarView!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleAvatarTapped(_:))))
-                    containerView.addSubview(avatarView!)
-                } else {
-                    avatarView?.isHidden = false
-                }
-                
-                var frame = avatarView!.frame
-                frame.origin.y = self.height - frame.height
-                frame.origin.x = !fromMe ? margins.left : (self.width - frame.width - margins.right)
-                avatarView!.frame = frame
-                
-                if let image = message.avatar {
-                    avatarView!.image = image
-                } else {
-                    avatarView?.setImageWithString(message.avatarURL!.absoluteString, activityIndicatorStyle: .gray)
-                }
+        guard message != nil else {
+            return
+        }
+        let width = self.width
+        let height = self.height
+        let margins = HIMessageBaseCell.margins
+        
+        let fromMe = message.fromMe
+        
+        balloonView.image = fromMe ? HIMessageBaseCell.ballonImageSent : HIMessageBaseCell.ballonImageReceived
+        
+        var messageMargin = CGFloat(0)
+        let showAvatar = (message.avatarURL != nil || message.avatar != nil) &&
+            (dataSourse.avatarsMode() == .both ||
+                (dataSourse.avatarsMode() == .other && !fromMe))
+        
+        var topInset: CGFloat = nameLabel != nil && !nameLabel!.isHidden ? nameLabel!.font.lineHeight : 0
+        
+        if let label = self.nameLabel, !label.isHidden {
+            label.frame = CGRect(x: margins.left + nameInsets.left,
+                                 y: 0,
+                                 width: width - margins.left - margins.right - nameInsets.left - nameInsets.right,
+                                 height: label.font.lineHeight)
+        }
+        
+        if showAvatar {
+            let size = dataSourse.userImageSize!()
+            messageMargin += size.width + HIMessageBaseCell.avatarMargin
+            if avatarView == nil {
+                avatarView = UIImageView(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+                avatarView!.contentMode = .scaleAspectFill
+                avatarView!.clipsToBounds = true
+                avatarView!.layer.cornerRadius = size.height / 2
+                avatarView!.isUserInteractionEnabled = true
+                avatarView!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleAvatarTapped(_:))))
+                containerView.addSubview(avatarView!)
             } else {
-                avatarView?.isHidden = true
+                avatarView?.isHidden = false
             }
             
-            var messageFrame = messageView.frame
-            messageFrame.size = contentSize()
-            messageFrame.origin.y = self.height - messageFrame.height - margins.bottom
-            if message.fromMe {
-                messageFrame.origin.x = self.width - messageFrame.width - messageMargin - margins.right
+            var frame = avatarView!.frame
+            frame.origin.y = height - frame.height
+            frame.origin.x = !fromMe ? margins.left : (width - frame.width - margins.right)
+            avatarView!.frame = frame
+            
+            if let image = message.avatar {
+                avatarView!.image = image
             } else {
-                messageFrame.origin.x = messageMargin + margins.left
+                avatarView?.setImageWithString(message.avatarURL!.absoluteString, activityIndicatorStyle: .gray)
             }
-            messageView.frame = messageFrame
-            
-            let isError = message.status == .error
-            if isError {
-                if errorButton == nil {
-                    errorButton = UIButton(type: .infoLight)
-                    errorButton!.tintColor = .red
-                    errorButton!.addTarget(self, action: #selector(errorTapped), for: .touchUpInside)
-                    
-                    containerView.addSubview(errorButton!)
-                } else {
-                    errorButton!.isHidden = false
-                }
-            } else if !isError && errorButton != nil {
-                errorButton!.isHidden = true
+        } else {
+            avatarView?.isHidden = true
+        }
+        
+        var messageFrame = messageView.frame
+        messageFrame.size = contentSize()
+        messageFrame.origin.y = height - messageFrame.height - margins.bottom
+        if message.fromMe {
+            messageFrame.origin.x = width - messageFrame.width - messageMargin - margins.right
+        } else {
+            messageFrame.origin.x = messageMargin + margins.left
+        }
+        messageView.frame = messageFrame
+        
+        let isError = message.status == .error
+        if isError {
+            if errorButton == nil {
+                errorButton = UIButton(type: .infoLight)
+                errorButton!.tintColor = .red
+                errorButton!.addTarget(self, action: #selector(errorTapped), for: .touchUpInside)
+                
+                containerView.addSubview(errorButton!)
+            } else {
+                errorButton!.isHidden = false
             }
-            
-            if errorButton != nil && !errorButton!.isHidden {
-                let x = message.fromMe ? messageView.frame.minX - 25 : messageView.frame.maxX + 25
-                errorButton!.center = CGPoint(x: x, y: containerView.height / 2)
-            }
+        } else if !isError && errorButton != nil {
+            errorButton!.isHidden = true
+        }
+        
+        if errorButton != nil && !errorButton!.isHidden {
+            let x = message.fromMe ? messageView.frame.minX - 25 : messageView.frame.maxX + 25
+            errorButton!.center = CGPoint(x: x, y: messageView.frame.midY)
         }
     }
     

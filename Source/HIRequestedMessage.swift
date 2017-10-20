@@ -136,6 +136,10 @@ extension HIRequestedMessage: HIMessage {
     public var readed: Bool {
         return true
     }
+    
+    public var userName: String? {
+        return nil
+    }
 }
 
 

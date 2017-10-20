@@ -48,6 +48,9 @@ open class HIMessagePhotoCell: HIMessageBaseCell {
     }
     
     open override func messageDidChanged() {
+        nameInsets.left = fromMe ? 10 : 15
+        nameInsets.right = fromMe ? 15 : 10
+        
         if let photo = message.photo {
             photoView.image = photo
         } else if let url = message.photoThumbnailURL {

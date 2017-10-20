@@ -31,6 +31,7 @@ open class HIChatViewController: UIViewController {
     fileprivate var dateFormatter = DateFormatter()
     
     open var messageFont: UIFont = UIFont.systemFont(ofSize: 15)
+    open var userNameFont: UIFont = UIFont.systemFont(ofSize: 10)
     
     static func bundle() -> Bundle {
         let podBundle = Bundle(for: HIChatViewController.self)
@@ -231,7 +232,11 @@ extension HIChatViewController: UITableViewDataSource {
     
     @objc(tableView:heightForRowAtIndexPath:) public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let message = conversation[indexPath.section][indexPath.row]
-        return heightForMessage(message) + HIMessageBaseCell.margins.bottom + HIMessageBaseCell.margins.top
+        var height = heightForMessage(message) + HIMessageBaseCell.margins.bottom + HIMessageBaseCell.margins.top
+        if message.userName != nil {
+            height += userNameFont.lineHeight
+        }
+        return height
     }
     
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -261,6 +266,7 @@ extension HIChatViewController: UITableViewDataSource {
         cell.dataSourse = self
         cell.delegate = self
         cell.textFont = messageFont
+        cell.userNameFont = userNameFont
         
         cell.message = message
         
