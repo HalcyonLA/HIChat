@@ -131,19 +131,29 @@ open class HIChatViewController: UIViewController {
             
             tableView.reloadData()
             if scrolling {
-                tableView.scrollToEnd(animated: animated)
+                tableView.tv_scrollToEnd(animated: animated)
             }
         }
     }
     
     fileprivate func insertMessage(_ message: HIMessage) {
-        synced(self) { 
-            var insertSection = true
-            if conversation.count > 0 {
-                if conversation.last!.last!.date.isTheSameDay(message.date) {
-                    insertSection = false
+        synced(self) {
+            var insertSection: Bool = true
+            switch headerType {
+            case .none:
+                insertSection = false
+                
+            case .dayInterval:
+                if conversation.count > 0 {
+                    if conversation.last!.last!.date.isTheSameDay(message.date) {
+                        insertSection = false
+                    }
                 }
+                
+            case .eachMessage:
+                insertSection = true
             }
+            
             tableView.beginUpdates()
             
             if insertSection {
@@ -167,8 +177,20 @@ open class HIChatViewController: UIViewController {
                 if let index = group.index(where: { (msg) -> Bool in
                     return msg === message
                 }) {
+                    let removeSection: Bool
                     tableView.beginUpdates()
-                    if group.count == 1 {
+                    switch headerType {
+                    case .none:
+                        removeSection = false
+                        
+                    case .dayInterval:
+                        removeSection = group.count == 1
+                        
+                    case .eachMessage:
+                        removeSection = true
+                    }
+                    
+                    if removeSection {
                         conversation.remove(at: i)
                         tableView.deleteSections(IndexSet(integer: i), with: .top)
                     } else {
