@@ -304,11 +304,14 @@ extension HIChatViewController: UITableViewDataSource {
 extension HIChatViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if headerType.useHeader() {
-            let headerView = tableView.dequeueReusableHeaderFooterViewWithClass(HIMessageHeaderView.self)
+            let headerView = tableView.dequeueReusableHeaderFooterViewWithClass(HIMessageHeaderView.self)!
             
-            let date = conversation[section].first!.date
+            let message = conversation[section].first!
             
-            headerView?.label.text = dateFormatter.string(from: date)
+            headerView.label.text = dateFormatter.string(from: message.date)
+            
+            let delegate = self as HIMessageDataSource
+            delegate.configureHeader?(headerView, forMessage: message)
             
             return headerView
         }

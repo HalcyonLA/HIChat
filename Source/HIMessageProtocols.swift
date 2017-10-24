@@ -45,6 +45,8 @@ import UIKit
     
     @objc optional func configureCell(_ cell: HIMessageBaseCell, forMessage message: HIMessage)
     
+    @objc optional func configureHeader(_ header: HIMessageHeaderView, forMessage message: HIMessage)
+    
     @objc optional func messageMinWidth(_ fromMe: Bool) -> CGFloat
     
     func mediaMessageWidth() -> CGFloat

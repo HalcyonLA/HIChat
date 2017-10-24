@@ -57,7 +57,7 @@ open class HIMessageBaseCell: UITableViewCell {
         
         appendGesture(view: messageView)
         
-        addSubview(containerView)
+        contentView.addSubview(containerView)
     }
     
     required public init?(coder aDecoder: NSCoder) {

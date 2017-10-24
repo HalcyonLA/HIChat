@@ -12,7 +12,7 @@ open class HIMessageHeaderView: UITableViewHeaderFooterView {
     
     open static var customFont: UIFont?
     
-    let label: UILabel
+    open let label: UILabel
     
     override init(reuseIdentifier: String?) {
         label = UILabel()
@@ -27,7 +27,7 @@ open class HIMessageHeaderView: UITableViewHeaderFooterView {
         
         super.init(reuseIdentifier: reuseIdentifier)
         
-        self.addSubview(label)
+        self.contentView.addSubview(label)
         self.contentView.backgroundColor = UIColor.clear
     }
     
