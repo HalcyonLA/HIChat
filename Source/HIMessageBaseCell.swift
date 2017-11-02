@@ -15,8 +15,8 @@ open class HIMessageBaseCell: UITableViewCell {
     open var nameInsets = UIEdgeInsetsMake(0, 0, 0, 0)
     open static var avatarMargin = CGFloat(8)
     open static var maxWidth = UIDevice.deviceWidth() - 100
-    open static var ballonImageSent = UIImage(named: "hic-bubble-sent", in: HIChatViewController.bundle(), compatibleWith: nil)!.tintColor(UIColor.lightGray)
-    open static var ballonImageReceived = UIImage(named: "hic-bubble-received", in: HIChatViewController.bundle(), compatibleWith: nil)!.tintColor(UIColor.blue)
+    open static var ballonImageSent = UIImage(named: "hic-bubble-sent", in: HIMessageInputView.bundle(), compatibleWith: nil)!.tintColor(UIColor.lightGray)
+    open static var ballonImageReceived = UIImage(named: "hic-bubble-received", in: HIMessageInputView.bundle(), compatibleWith: nil)!.tintColor(UIColor.blue)
     
     open weak var dataSourse: HIMessageDataSource!
     open weak var delegate: HIMessageDelegate!

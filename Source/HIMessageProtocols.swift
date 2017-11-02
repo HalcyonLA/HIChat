@@ -14,14 +14,7 @@ import UIKit
     case both
 }
 
-@objc public protocol HIMessageDelegate: NSObjectProtocol {
-    
-    @objc optional func inputViewShouldSendMessage(_ inputView: HIMessageInputView) -> Bool
-    
-    func inputView(_ inputView: HIMessageInputView, didSendMessage message: String)
-    
-    func inputViewDidSelectMediaButton(_ inputView: HIMessageInputView)
-    
+@objc public protocol HIMessageDelegate: HIMessageInputDelegate {
     func didSelectMediaInMessageCell(_ cell: HIMessageBaseCell)
     
     func didSelectAvatarInMessageCell(_ cell: HIMessageBaseCell)

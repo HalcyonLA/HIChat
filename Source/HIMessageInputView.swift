@@ -10,14 +10,26 @@ import UIKit
 import HalcyonInnovationKit
 import DAKeyboardControl
 
+@objc public protocol HIMessageInputDelegate: NSObjectProtocol {
+    @objc optional func inputViewShouldSendMessage(_ inputView: HIMessageInputView) -> Bool
+    
+    func inputView(_ inputView: HIMessageInputView, didSendMessage message: String)
+    
+    @objc optional func inputViewDidSelectMediaButton(_ inputView: HIMessageInputView)
+}
+
 open class HIMessageInputView: UIView {
 
     open static var Margins = UIEdgeInsetsMake(7, 55, 7, 55)
     open static var TextContainerInset = UIEdgeInsetsMake(5, 8, 5, 8)
     open static var Font = UIFont.systemFont(ofSize: 17)
     
-    internal weak var tableView: UITableView?
-    internal weak var delegate: HIMessageDelegate?
+    open weak var tableView: UITableView? {
+        didSet {
+            tableView?.keyboardDismissMode = .interactive
+        }
+    }
+    open weak var delegate: HIMessageInputDelegate?
     
     open fileprivate(set) var textView: HITextView
     open fileprivate(set) var sendButton: UIButton
@@ -93,8 +105,13 @@ open class HIMessageInputView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    static func bundle() -> Bundle {
+        let podBundle = Bundle(for: HIMessageInputView.self)
+        let url = podBundle.url(forResource: "HIChat", withExtension: "bundle")!
+        return Bundle(url: url)!
+    }
+    
     public init(controller: UIViewController) {
-        
         let margins = HIMessageInputView.Margins
         let textContainerInset = HIMessageInputView.TextContainerInset
         
@@ -109,7 +126,7 @@ open class HIMessageInputView: UIView {
         }
         
         mediaButton = UIButton(frame: CGRect(x: 0, y: 0, width: margins.left, height: height))
-        mediaButton.setImage(UIImage(named: "hic-camera-button", in: HIChatViewController.bundle(), compatibleWith: nil), for: .normal)
+        mediaButton.setImage(UIImage(named: "hic-camera-button", in: HIMessageInputView.bundle(), compatibleWith: nil), for: .normal)
         mediaButton.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin]
         
         sendButton = UIButton(frame: CGRect(x: width - margins.right, y: 0, width: margins.right, height: height))
@@ -148,6 +165,7 @@ open class HIMessageInputView: UIView {
         sendButton.addTarget(self, action: #selector(sendTapped), for: .touchUpInside)
         textView.delegate = self
         
+        translatesAutoresizingMaskIntoConstraints = false
         autoresizingMask = [.flexibleTopMargin, .flexibleWidth]
         
         backgroundColor = UIColor(hex: 0xf9f9f9)
@@ -215,7 +233,7 @@ open class HIMessageInputView: UIView {
     }
     
     @objc fileprivate func mediaTapped() {
-        delegate?.inputViewDidSelectMediaButton(self)
+        delegate?.inputViewDidSelectMediaButton?(self)
     }
     
     @objc fileprivate func sendTapped() {

@@ -33,12 +33,6 @@ open class HIChatViewController: UIViewController {
     open var messageFont: UIFont = UIFont.systemFont(ofSize: 15)
     open var userNameFont: UIFont = UIFont.systemFont(ofSize: 10)
     
-    static func bundle() -> Bundle {
-        let podBundle = Bundle(for: HIChatViewController.self)
-        let url = podBundle.url(forResource: "HIChat", withExtension: "bundle")!
-        return Bundle(url: url)!
-    }
-    
     override open func viewDidLoad() {
         super.viewDidLoad()
         

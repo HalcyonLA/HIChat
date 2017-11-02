@@ -6,7 +6,7 @@ s.name = "HIChat"
 s.module_name = "HIChat"
 s.summary = "Halcyon Innovation chat."
 s.requires_arc = true
-s.version = "1.1.3"
+s.version = "1.1.4"
 s.author = { "Vlad Getman" => "ibrightsider@gmail.com" }
 
 s.license = { :type => "MIT", :file => "LICENSE" }
@@ -15,11 +15,20 @@ s.source = { :git => "https://github.com/HalcyonLA/HIChat.git", :tag => "#{s.ver
 
 s.framework = "UIKit"
 
-s.dependency 'HalcyonInnovationKit/Network', '~> 1.3.2'
-s.dependency 'SZTextView', '~> 1.3'
-s.dependency 'DAKeyboardControl', '~> 2.4.0'
+s.default_subspec = 'Core'
 
-s.source_files = "Source/**/*.{swift}"
-s.ios.resource_bundle = { 'HIChat' => '*.xcassets' }
+ s.subspec 'Core' do |cs|
+ 	cs.source_files = "Source/**/*.{swift}"
+    cs.dependency 'HalcyonInnovationKit/Network', '~> 1.3.6'
+    cs.dependency 'HIChat/Input'
+ end
+
+ s.subspec 'Input' do |si|
+	si.source_files = "Source/{HIMessageInputView,HITextView}.{swift}"
+	si.dependency 'SZTextView', '~> 1.3'
+	si.dependency 'DAKeyboardControl', '~> 2.4.0'
+	si.dependency 'HalcyonInnovationKit/UI', '~> 1.3.6'
+	si.ios.resource_bundle = { 'HIChat' => '*.xcassets' }
+ end
 
 end
