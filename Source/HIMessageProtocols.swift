@@ -13,6 +13,10 @@ import UIKit
     case other
     case both
 }
+@objc public enum HIMessageAvatarsPosition : Int {
+    case bottom
+    case top
+}
 
 @objc public protocol HIMessageDelegate: HIMessageInputDelegate {
     func didSelectMediaInMessageCell(_ cell: HIMessageBaseCell)
@@ -49,4 +53,6 @@ import UIKit
     @objc optional func userImageSize() -> CGSize
     
     func avatarsMode() -> HIMessageAvatarsMode
+    
+    func avatarPosition() -> HIMessageAvatarsPosition
 }

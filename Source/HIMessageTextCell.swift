@@ -11,7 +11,9 @@ import UIKit
 
 open class HIMessageTextCell: HIMessageBaseCell {
     
-    let _textView: HIMessageTextView
+    open static var textInsets = UIEdgeInsetsMake(8, 15, 8, 10)
+    
+    private let _textView: HIMessageTextView
     
     open var textView: UITextView {
         return _textView
@@ -50,13 +52,17 @@ open class HIMessageTextCell: HIMessageBaseCell {
     open override func messageDidChanged() {
         let fromMe = message.fromMe
         
-        let leftSpacing: CGFloat = fromMe ? 10 : 15
-        let rightSpacing: CGFloat = fromMe ? 15 : 10
+        var insets = HIMessageTextCell.textInsets
+        if fromMe {
+            let left = insets.left
+            insets.left = insets.right
+            insets.right = left
+        }
         
-        _textView.textContainerInset = UIEdgeInsetsMake(8, leftSpacing, 8, rightSpacing)
+        _textView.textContainerInset = insets
         
-        nameInsets.left = leftSpacing
-        nameInsets.right = rightSpacing
+        nameInsets.left = insets.left
+        nameInsets.right = insets.right
         
         _textView.text = message.messageText
     }

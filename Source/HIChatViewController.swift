@@ -277,7 +277,8 @@ extension HIChatViewController: UITableViewDataSource {
             cell = tableView.dequeueReusableCellWithClass(HIMessagePhotoCell.self, indexPath: indexPath)
             
         case .custom:
-            cell = tableView.dequeueReusableCellWithClass(cellClassForCustomType(message), indexPath: indexPath)
+            let identifier = String(describing: cellClassForCustomType(message))
+            cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as! HIMessageBaseCell
         }
         cell.dataSourse = self
         cell.delegate = self
@@ -382,5 +383,8 @@ extension HIChatViewController: HIMessageDataSource {
     
     open func avatarsMode() -> HIMessageAvatarsMode {
         return .none
+    }
+    open func avatarPosition() -> HIMessageAvatarsPosition {
+        return .bottom
     }
 }

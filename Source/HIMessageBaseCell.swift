@@ -35,7 +35,7 @@ open class HIMessageBaseCell: UITableViewCell {
     private var errorButton: UIButton?
     open private(set) var messageView: UIView
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         
         let demoRect = CGRect(x: 0, y: 0, width: 10, height: 10)
         
@@ -150,7 +150,14 @@ open class HIMessageBaseCell: UITableViewCell {
             }
             
             var frame = avatarView!.frame
-            frame.origin.y = height - frame.height
+            switch dataSourse.avatarPosition() {
+            case .bottom:
+                frame.origin.y = height - frame.height
+                
+            case .top:
+                frame.origin.y = margins.top
+            }
+            
             frame.origin.x = !fromMe ? margins.left : (width - frame.width - margins.right)
             avatarView!.frame = frame
             
