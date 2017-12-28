@@ -22,7 +22,7 @@ open class HIMessageInputView: UIView {
 
     open static var Margins = UIEdgeInsetsMake(7, 55, 7, 55)
     open static var TextContainerInset = UIEdgeInsetsMake(5, 8, 5, 8)
-    open static var Font = UIFont.systemFont(ofSize: 17)
+    open static var Font = UIFont.systemFont(ofSize: 15)
     
     open weak var tableView: UITableView? {
         didSet {
@@ -148,7 +148,7 @@ open class HIMessageInputView: UIView {
         textView = HITextView(frame: CGRect(x: margins.left, y: margins.top, width: width - margins.left - margins.right, height: height - margins.top - margins.bottom))
         textView.textContainer.lineFragmentPadding = 0
         textView.textContainerInset = HIMessageInputView.TextContainerInset
-        textView.font = UIFont.systemFont(ofSize: 15)
+        textView.font = HIMessageInputView.Font
         textView.placeholderTextColor = UIColor(hex: 0xc8c8ce)
         textView.placeholder = "Type your message here..."
         textView.textColor = UIColor.black
