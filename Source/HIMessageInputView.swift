@@ -16,6 +16,8 @@ import DAKeyboardControl
     func inputView(_ inputView: HIMessageInputView, didSendMessage message: String)
     
     @objc optional func inputViewDidSelectMediaButton(_ inputView: HIMessageInputView)
+    
+    @objc optional func inputView(_ inputView: HIMessageInputView, didChangeMessage message: String)
 }
 
 open class HIMessageInputView: UIView {
@@ -260,5 +262,6 @@ open class HIMessageInputView: UIView {
 extension HIMessageInputView: UITextViewDelegate {
     public func textViewDidChange(_ textView: UITextView) {
         textViewDidChanged()
+        delegate?.inputView?(self, didChangeMessage: textView.text)
     }
 }
