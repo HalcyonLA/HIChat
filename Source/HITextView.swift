@@ -14,9 +14,9 @@ open class HITextView: SZTextView {
     public weak var overrideNextResponder: UIResponder? {
         didSet {
             if overrideNextResponder != nil {
-                NotificationCenter.default.addObserver(self, selector: #selector(menuDidHide), name: NSNotification.Name.UIMenuControllerDidHideMenu, object: nil)
+                NotificationCenter.default.addObserver(self, selector: #selector(menuDidHide), name: UIMenuController.didHideMenuNotification, object: nil)
             } else {
-                NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIMenuControllerDidHideMenu, object: nil)
+                NotificationCenter.default.removeObserver(self, name: UIMenuController.didHideMenuNotification, object: nil)
             }
         }
     }

@@ -22,8 +22,8 @@ import DAKeyboardControl
 
 open class HIMessageInputView: UIView {
 
-    open static var Margins = UIEdgeInsetsMake(7, 55, 7, 55)
-    open static var TextContainerInset = UIEdgeInsetsMake(5, 8, 5, 8)
+    open static var Margins = UIEdgeInsets(top: 7, left: 55, bottom: 7, right: 55)
+    open static var TextContainerInset = UIEdgeInsets(top: 5, left: 8, bottom: 5, right: 8)
     open static var Font = UIFont.systemFont(ofSize: 15)
     
     open weak var tableView: UITableView? {

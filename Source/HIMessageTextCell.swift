@@ -11,7 +11,7 @@ import UIKit
 
 open class HIMessageTextCell: HIMessageBaseCell {
     
-    open static var textInsets = UIEdgeInsetsMake(8, 15, 8, 10)
+    open static var textInsets = UIEdgeInsets(top: 8, left: 15, bottom: 8, right: 10)
     
     private let _textView: HIMessageTextView
     
@@ -19,8 +19,7 @@ open class HIMessageTextCell: HIMessageBaseCell {
         return _textView
     }
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        
+    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         _textView = HIMessageTextView()
         _textView.textContainer.lineFragmentPadding = 0
         _textView.isEditable = false

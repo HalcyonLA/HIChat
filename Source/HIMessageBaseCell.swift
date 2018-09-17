@@ -11,8 +11,8 @@ import SDWebImage
 
 open class HIMessageBaseCell: UITableViewCell {
     
-    open static var margins = UIEdgeInsetsMake(8, 8, 8, 8)
-    open var nameInsets = UIEdgeInsetsMake(0, 0, 0, 0)
+    open static var margins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    open var nameInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     open static var avatarMargin = CGFloat(8)
     open static var maxWidth = UIDevice.deviceWidth() - 100
     open static var ballonImageSent = UIImage(named: "hic-bubble-sent", in: HIMessageInputView.bundle(), compatibleWith: nil)!.tintColor(UIColor.lightGray)
@@ -35,8 +35,7 @@ open class HIMessageBaseCell: UITableViewCell {
     private var errorButton: UIButton?
     open private(set) var messageView: UIView
     
-    public override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        
+    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         let demoRect = CGRect(x: 0, y: 0, width: 10, height: 10)
         
         containerView.frame = demoRect

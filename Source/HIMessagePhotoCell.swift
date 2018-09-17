@@ -13,7 +13,7 @@ open class HIMessagePhotoCell: HIMessageBaseCell {
     
     let photoView: UIImageView
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         
         photoView = UIImageView()
         photoView.clipsToBounds = true
