@@ -299,7 +299,7 @@ extension HIChatViewController: UITableViewDataSource {
 extension HIChatViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if headerType.useHeader() {
-            let headerView = tableView.dequeueReusableHeaderFooterViewWithClass(HIMessageHeaderView.self)!
+            let headerView = tableView.dequeueReusableHeaderFooterViewWithClass(HIMessageHeaderView.self)
             
             let message = conversation[section].first!
             
